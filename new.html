@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vertical Timeline & Collage Gallery</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css" />
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a2e;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120vh;
+      background: url('./images/VIR.jpg') center center/cover no-repeat;
+      opacity: 0.3;
+      z-index: -1;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      width: 90%;
+      margin: 20px auto;
+      gap: 20px;
+    }
+
+    /* Gallery Grid: Collage-Like Layout with No Gaps */
+    .gallery {
+      flex: 3;
+      display: grid;
+      /* Create columns that auto-fit with a minimum width */
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-auto-rows: 150px;
+      gap: 0;         /* No gap between items */
+      padding: 0;     /* No padding around the gallery */
+      opacity: 0.4;   /* Initial faded background */
+      transition: opacity 0.3s ease;
+      grid-auto-flow: dense;  /* Fill gaps in the grid densely */
+    }
+    .gallery.active {
+      opacity: 1;     /* Full opacity when a year is selected */
+      background: none;
+    }
+    .gallery .gallery-item {
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .gallery .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery .gallery-item:hover {
+      transform: scale(1.05);
+    }
+    /* Collage effect: vary spans for a dynamic grid */
+    .gallery .gallery-item:nth-child(3n) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    .gallery .gallery-item:nth-child(4n) {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+    .gallery .gallery-item:nth-child(7n) {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+    .gallery .gallery-item:nth-child(10n) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    /* Landing page message styling */
+    .landing-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 40px;
+      padding: 40px;
+      font-style: italic;
+      font-weight: bold;
+      /* opacity: 100; */
+      font-family: sans-serif;
+      color: #d4a024;
+    }
+    
+    /* Timeline Styles */
+    .timeline {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 0;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 70px;
+      bottom: 60px;
+      width: 2px;
+      background-color: burlywood;
+    }
+    .arrow {
+      font-size: 40px;
+      color: #d4a024;
+      margin: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .year-container {
+      display: flex;
+      align-items: center;
+      margin: 30px 0;
+      position: relative;
+    }
+    .year-button {
+      width: 15px;
+      height: 15px;
+      background: #d4a024;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.6s ease, background-color 0.6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .year-button:hover {
+      transform: translateX(-50%) scale(1.6);
+      background-color: burlywood;
+    }
+    .year-button.active-year {
+      box-shadow: 0 0 10px 3px rgba(212, 160, 36, 0.7);
+    }
+    .year-label {
+      font-style: italic;
+      margin-left: 120px;
+      font-size: 28px;
+      font-weight: lighter;
+      color: #d49f24cc;
+      transition: transform 0.6s ease, background-color 0.6s ease;
+    }
+    .year-label:hover {
+      transform: translateX(0%) scale(1.4);
+      color: burlywood;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Gallery with an initial landing message -->
+    <div class="gallery" id="gallery-container">
+      <div class="landing-message">
+        Welcome! Virsa Gallery Page
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      <div class="arrow arrow-up">&uarr;</div>
+      <div class="year-container">
+        <button class="year-button" data-year="2020"></button>
+        <span class="year-label">2020</span>
+      </div>
+      <div class="year-container">
+        <button class="year-button" data-year="2021"></button>
+        <span class="year-label">2021</span>
+      </div>
+      <div class="year-container">
+        <button class="year-button" data-year="2022"></button>
+        <span class="year-label">2022</span>
+      </div>
+      <div class="year-container">
+        <button class="year-button" data-year="2023"></button>
+        <span class="year-label">2023</span>
+      </div>
+      <div class="year-container">
+        <button class="year-button" data-year="2024"></button>
+        <span class="year-label">2024</span>
+      </div>
+      <div class="year-container">
+        <button class="year-button" data-year="2025"></button>
+        <span class="year-label">2025</span>
+      </div>
+      <div class="arrow arrow-down">&darr;</div>
+    </div>
+  </div>
+
+  <script>
+    // Use Picsum Photos with seeded URLs to ensure visible, unique images
+    const galleries = {
+      "2020": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2020-${i}/600/600`),
+      "2021": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2021-${i}/600/600`),
+      "2022": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2022-${i}/600/600`),
+      "2023": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2023-${i}/600/600`),
+      "2024": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2024-${i}/600/600`),
+      "2025": [...Array(17)].map((_, i) => `https://picsum.photos/seed/2025-${i}/600/600`)
+    };
+
+    function loadGallery(year) {
+      const images = galleries[year];
+      const container = $('#gallery-container');
+      container.empty(); // Remove landing message or previous images
+
+      images.forEach(img => {
+        container.append(`
+          <a href="${img}" class="gallery-item" data-magnific-popup>
+            <img src="${img}" alt="Image ${year}" />
+          </a>
+        `);
+      });
+
+      $('.gallery-item').magnificPopup({
+        type: 'image',
+        gallery: { enabled: true }
+      });
+
+      // Activate gallery (remove faded background)
+      container.addClass('active');
+    }
+
+    $(document).ready(() => {
+      // Year button click: set active year and load gallery
+      $('.year-button').on('click', function () {
+        $('.year-button').removeClass('active-year');
+        $(this).addClass('active-year');
+        const year = $(this).data('year');
+        loadGallery(year);
+      });
+
+      // Arrow up click: if a year is active, select the previous year
+      $('.arrow-up').on('click', function() {
+        let $active = $('.year-button.active-year');
+        let $buttons = $('.year-button');
+        if ($active.length === 0) return; // remain on landing page
+        let currentIndex = $buttons.index($active);
+        if (currentIndex > 0) {
+          $buttons.eq(currentIndex - 1).click();
+        }
+      });
+
+      // Arrow down click: if a year is active, select the next year
+      $('.arrow-down').on('click', function() {
+        let $active = $('.year-button.active-year');
+        let $buttons = $('.year-button');
+        if ($active.length === 0) return; // remain on landing page
+        let currentIndex = $buttons.index($active);
+        if (currentIndex < $buttons.length - 1) {
+          $buttons.eq(currentIndex + 1).click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
